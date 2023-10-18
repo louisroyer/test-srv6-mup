@@ -7,11 +7,11 @@ x-group:
     sysctls:
       - net.ipv6.conf.all.disable_ipv6=0
       - net.ipv4.ip_forward=1
-      - net.ipv4.conf.all.accept_local=1
-      - net.ipv4.conf.default.accept_local=1
       - net.ipv6.conf.all.forwarding=1
       - net.ipv6.conf.all.seg6_enabled=1
       - net.ipv6.conf.default.seg6_enabled=1
+        #- net.ipv4.conf.all.accept_local=1
+        #- net.ipv4.conf.default.accept_local=1
     devices:
       - "/dev/net/tun:/dev/net/tun"
     volumes:
@@ -27,7 +27,7 @@ services:
     <<: *node
     environment:
       ROUTES_INIT: |-
-        - add 10.0.103.0/24 via 10.0.101.2
+        - add 10.0.1.0/24 via 10.0.101.2
       PRE_INIT_HOOK: "ip"
       PRE_INIT_HOOK_0: "addr"
       PRE_INIT_HOOK_1: "add"
@@ -48,7 +48,7 @@ services:
     <<: *node
     environment:
       ROUTES_INIT: |-
-        - add 10.0.103.0/24 via 10.0.101.3
+        - add 10.0.1.0/24 via 10.0.101.3
       PRE_INIT_HOOK: "ip"
       PRE_INIT_HOOK_0: "addr"
       PRE_INIT_HOOK_1: "add"
@@ -97,14 +97,49 @@ services:
     container_name: srgw
     hostname: srgw
     <<: *node
+    environment:
+      ROUTES_INIT: |-
+        - add 10.0.4.0/24 via 10.0.102.5
     networks:
       ipv6-backbone:
         ipv6_address: fd00:1111:2222:3333:4444::1
       gtp4:
+        ipv4_address: 10.0.102.2
+  gnb-ul1:
+    container_name: gnb-ul1
+    hostname: gnb-ul1
+    <<: *node
+    environment:
+      ROUTES_INIT: |-
+        - add 10.0.3.0/24 via 10.0.102.2
+      POST_INIT_HOOK: "ip"
+      POST_INIT_HOOK_0: "route"
+      POST_INIT_HOOK_1: "del"
+      POST_INIT_HOOK_2: "default"
+    networks:
+      ran:
+        ipv4_address: 10.0.1.4
+      gtp4:
         ipv4_address: 10.0.102.3
-  gnb:
-    container_name: gnb
-    hostname: gnb
+  gnb-ul2:
+    container_name: gnb-ul2
+    hostname: gnb-ul2
+    <<: *node
+    environment:
+      ROUTES_INIT: |-
+        - add 10.0.3.0/24 via 10.0.102.2
+      POST_INIT_HOOK: "ip"
+      POST_INIT_HOOK_0: "route"
+      POST_INIT_HOOK_1: "del"
+      POST_INIT_HOOK_2: "default"
+    networks:
+      ran:
+        ipv4_address: 10.0.1.5
+      gtp4:
+        ipv4_address: 10.0.102.4
+  gnb-dl:
+    container_name: gnb-dl
+    hostname: gnb-dl
     <<: *node
     environment:
       POST_INIT_HOOK: "ip"
@@ -113,37 +148,37 @@ services:
       POST_INIT_HOOK_2: "default"
     networks:
       ran:
-        ipv4_address: 10.0.103.2
+        ipv4_address: 10.0.1.6
       gtp4:
-        ipv4_address: 10.0.102.2
+        ipv4_address: 10.0.102.5
   ue1:
     container_name: ue1
     hostname: ue1
     <<: *node
     environment:
       ROUTES_INIT: |-
-        - add 10.0.2.0/24 via 10.0.103.2
+        - add 10.0.2.0/24 via 10.0.1.4
       POST_INIT_HOOK: "ip"
       POST_INIT_HOOK_0: "route"
       POST_INIT_HOOK_1: "del"
       POST_INIT_HOOK_2: "default"
     networks:
       ran:
-        ipv4_address: 10.0.103.3
+        ipv4_address: 10.0.1.2
   ue2:
     container_name: ue2
     hostname: ue2
     <<: *node
     environment:
       ROUTES_INIT: |-
-        - add 10.0.2.0/24 via 10.0.103.2
+        - add 10.0.2.0/24 via 10.0.1.5
       POST_INIT_HOOK: "ip"
       POST_INIT_HOOK_0: "route"
       POST_INIT_HOOK_1: "del"
       POST_INIT_HOOK_2: "default"
     networks:
       ran:
-        ipv4_address: 10.0.103.4
+        ipv4_address: 10.0.1.3
     
   
 networks:
@@ -171,7 +206,7 @@ networks:
     ipam:
       driver: default
       config:
-        - subnet: 10.0.103.0/24
+        - subnet: 10.0.1.0/24
   
   ipv4-service-backbone:
     enable_ipv6: false

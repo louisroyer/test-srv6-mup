@@ -1,0 +1,23 @@
+debug: true
+ # We are emulating an uplink gNB
+ # incomming packets are plain IPv4,
+ # 1. We add a SRv6 header with appropriate GTP parameters
+ # 2. we remove the SRv6 header and replace it with a GTP4 header
+ #
+ipv4-headend-prefix: "10.0.2.0/24" # handle packets with this destination
+linux-headend-set-source-address: "fd00:2222:0001:0A00:0401:04D2::0030" # from : fd00:2222:1::/48 + 10.0.4.1 port 1234
+headends:
+  - name: "simulate gnb uplink"
+    to: "10.0.2.0/24"
+    provider: "Linux"
+    behavior: "H.Encaps"
+    policy:
+      - bsid:
+          segments-list:
+            - "fd00:2222:1:0A00:0301:0000:0000:0100" # to 10.0.3.1 TEID 1 = 0A 00 03 01 |00| 00 00 00 01
+
+locator: "fd00:2222::/32"
+endpoints:
+  - prefix: "fd00:2222:1::/48"
+    provider: "NextMN"
+    behavior: "End.M.GTP4.E"

@@ -1,0 +1,32 @@
+debug: true
+ # We are emulating an downlink gNB
+ # incomming packets are GTP4
+ # 1. we remove the GTP4 header and replace it with SRv6 header
+ # 2. We remove the SRv6 header and forward
+ #
+ipv4-headend-prefix: "10.0.4.0/24" # handle packets with this destination
+headends:
+  - name: "gnb downlink"
+    to: "10.0.4.0/24"
+    provider: "NextMN"
+    behavior: "H.M.GTP4.D"
+    source-address-prefix: "fd00:2222:1::/32"
+    policy:
+      - match:
+          teid: 0x01
+        bsid:
+          bsid-prefix: "fd00:2222:2::/48"
+          segments-list: # direct
+      - match:
+          teid: 0x02
+        bsid:
+          bsid-prefix: "fd00:2222:2::/48"
+          segments-list: # direct
+
+locator: "fd00:2222::/32"
+endpoints:
+  - prefix: "fd00:2222:2::/48"
+    provider: "Linux"
+    behavior: "End.DX4"
+
+
