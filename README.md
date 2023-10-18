@@ -54,7 +54,7 @@ $ make d
 Each UE use it's own GTP TEID. The SRGW create a different SRH depending on the TEID.
 Rn is a border gateway of the edge n.
 Sn is an instance of S in the edge n.
-[Testbed simplified](./images/testbed_simplified.svg)
+![Testbed simplified](./images/testbed_simplified.svg)
 
 We use SRv6 functions to emulate a gNB that will use different TEID per UE.
-[Testbed full](./images/testbed_full.svg)
+![Testbed full](./images/testbed_full.svg)
