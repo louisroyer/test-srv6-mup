@@ -41,3 +41,7 @@ install/%:
 s/%:
 	$(EXEC) $(@F) srv6 -c ../config/$(@F).yaml
 
+ts/%:
+	$(EXEC) $(@F) tshark -i any
+
+
