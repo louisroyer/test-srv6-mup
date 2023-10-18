@@ -4,7 +4,7 @@ debug: true
 ipv4-headend-prefix: "10.0.1.0/24" # handle packets with this destination
 linux-headend-set-source-address: "fd00:3:1:0A00:0301:04D2::0030" # from : fd00:3:1::/48 + 10.0.3.1 port 1234
 headends:
-  - name: "simulate gnb uplink"
+  - name: "downlink"
     to: "10.0.1.0/24"
     provider: "Linux"
     behavior: "H.Encaps"
